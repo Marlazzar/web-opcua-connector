@@ -6,7 +6,6 @@ from asyncua.sync import Client, SyncNode
 from asyncua import crypto
 from asyncua.tools import endpoint_to_strings
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -30,7 +29,6 @@ class UaClient(object):
         self.user_private_key_path = None
         self.application_certificate_path = None
         self.application_private_key_path = None
-        self.load_application_certificate_settings()
 
     def _reset(self):
         self.client = None
@@ -56,7 +54,9 @@ class UaClient(object):
 
     def connect(self, uri):
         self.disconnect()
-        logger.info("Connecting to %s with parameters %s, %s, %s, %s", uri, self.security_mode, self.security_policy, self.user_certificate_path, self.user_private_key_path)
+        print("connecting to %s", uri)
+        logger.info("Connecting to %s with parameters %s, %s, %s, %s", uri, self.security_mode, self.security_policy,
+                    self.user_certificate_path, self.user_private_key_path)
         self.client = Client(uri)
         self.client.application_uri = self.application_uri
         self.client.description = "FreeOpcUa Client GUI"
@@ -83,7 +83,6 @@ class UaClient(object):
             self.client.load_type_definitions()
         except Exception:
             logger.exception("Loading custom stuff with spec <= 1.03 did not work")
-
 
     def disconnect(self):
         if self._connected:
@@ -126,3 +125,11 @@ class UaClient(object):
         descs = node.get_children_descriptions()
         descs.sort(key=lambda x: x.BrowseName)
         return descs
+
+if __name__ == '__main__':
+    uaclient = UaClient()
+    url = "opc.tcp://localhost:4840/freeopcua/server/"
+    uaclient.connect(url)
+    print("connected")
+    uaclient.disconnect()
+    print("disconnected")
