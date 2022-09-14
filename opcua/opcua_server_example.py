@@ -1,3 +1,4 @@
+# Code from https://github.com/FreeOpcUa/opcua-asyncio/blob/master/examples/server-example.py
 import asyncio
 import copy
 import logging
