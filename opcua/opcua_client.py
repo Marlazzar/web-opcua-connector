@@ -130,6 +130,9 @@ if __name__ == '__main__':
     uaclient = UaClient()
     url = "opc.tcp://localhost:4840/freeopcua/server/"
     uaclient.connect(url)
+    root = uaclient.client.nodes.root
+    logger.info("logging")
+    print("root %r", root.aio_obj)
     print("connected")
     uaclient.disconnect()
     print("disconnected")
