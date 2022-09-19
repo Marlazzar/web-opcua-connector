@@ -126,6 +126,19 @@ class UaClient(object):
         descs.sort(key=lambda x: x.BrowseName)
         return descs
 
+    @staticmethod
+    def get_node_desc(node):
+        attrs = node.read_attributes(
+            [ua.AttributeIds.DisplayName, ua.AttributeIds.BrowseName, ua.AttributeIds.NodeId
+             , ua.AttributeIds.NodeClass])
+        desc = ua.ReferenceDescription()
+        desc.DisplayName = attrs[0].Value.Value
+        desc.BrowseName = attrs[1].Value.Value
+        desc.NodeId = attrs[2].Value.Value
+        desc.NodeClass = attrs[3].Value.Value
+        desc.TypeDefinition = ua.TwoByteNodeId(ua.ObjectIds.FolderType)
+        return desc
+
 if __name__ == '__main__':
     uaclient = UaClient()
     url = "opc.tcp://localhost:4840/freeopcua/server/"

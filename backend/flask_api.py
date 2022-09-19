@@ -11,10 +11,6 @@ uaclient = UaClient()
 url = "opc.tcp://localhost:4840/freeopcua/server/"
 
 
-def node_repr(node):
-    return node.nodeid
-
-
 @app.route('/', methods=['GET'])
 def home():
     return 'home'
@@ -52,19 +48,18 @@ def get_children():
 
 
 @app.route('/nodes')
-def get_node():
-    if 'id' in request.args:
-        id = int(request.args['id'])
+def get_node_desc():
+    if 'id' in request.args and 'ns' in request.args:
+        id = request.args['id']
+        ns = request.args['ns']
         if uaclient._connected:
-            node = uaclient.get_node(nodeid=id)
-            return jsonify(node_repr(node))
-        return 'client not connected'
+            node = uaclient.get_node(f"ns={ns};i={id}")
+            desc = UaClient.get_node_desc(node)
+            return jsonify(desc)
+        return "client not connected"
     else:
-        return "Error: No id field provided. Please specify an id."
+        return "Error: No id and/or no ns (namespace) field provided. Please specify id and ns."
 
-uaclient.connect(url)
-root = uaclient.client.nodes.root
-children = uaclient.get_children(root)
-print(type(root))
-print(node_repr(root))
-app.run(debug=True)
+
+if __name__ == '__main__':
+    app.run(debug=True)
