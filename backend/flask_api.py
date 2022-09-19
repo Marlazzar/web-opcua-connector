@@ -1,5 +1,7 @@
 import flask
 from flask import request, jsonify
+import sys
+sys.path.insert(0,'..')
 from opcua.opcua_client import UaClient
 import json
 import asyncio
@@ -12,9 +14,12 @@ url = "opc.tcp://localhost:4840/freeopcua/server/"
 
 
 @app.route('/', methods=['GET'])
-def home():
+def default():
     return 'home'
 
+@app.route('/home', methods=['GET'])
+def home():
+    return jsonify("home")
 
 @app.route('/connect', methods=['GET'])
 def connect():
