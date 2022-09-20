@@ -22,13 +22,17 @@ def home():
 
 @app.route('/connect', methods=['GET', 'POST'])
 def connect():
-    url = request.form['url']
+    url = request.json['url']
+    print(url)
     if request.method == 'POST':
-        uaclient.connect(url)
+        try:
+            uaclient.connect(url)
+        except Exception as e:
+            return str(e)
     if uaclient._connected:
-        return "connection success"
+        return jsonify("connected")
     else:
-        return 'connection failed'
+        return jsonify("not connected")
 
 @app.route("/post_connect")
 def post_connect():
@@ -47,7 +51,7 @@ def post_connect():
 @app.route('/disconnect', methods=['GET'])
 def disconnect():
     uaclient.disconnect()
-    return 'disconnected'
+    return jsonify("disconnected")
 
 
 @app.route('/children')

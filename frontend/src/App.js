@@ -1,6 +1,6 @@
 import './App.css';
 import React, { useEffect, useState } from "react";
-
+import { ConnectBar } from './components/ConnectBar'
 
 
 function App() {
@@ -21,6 +21,7 @@ function App() {
 
   return (
     <div className="App">
+      <ConnectBar/>
       Hello
     </div>
   );
