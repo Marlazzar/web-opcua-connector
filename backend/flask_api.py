@@ -7,7 +7,7 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 uaclient = UaClient()
-url = "opc.tcp://localhost:4840/freeopcua/server/"
+#url = "opc.tcp://localhost:4840/freeopcua/server/"
 
 
 @app.route('/', methods=['GET'])
@@ -15,15 +15,30 @@ def home():
     return 'home'
 
 
-@app.route('/connect', methods=['GET'])
+@app.route('/connect', methods=['GET', 'POST'])
 def connect():
-    uaclient.connect(url)
+    url = request.form['url']
+    if request.method == 'POST':
+        uaclient.connect(url)
     if uaclient._connected:
-        return 'connection success'
+        return "connection success"
     else:
         return 'connection failed'
 
-
+@app.route("/post_connect")
+def post_connect():
+    return """
+        <html>
+            <body>
+                <form action = "http://localhost:5000/connect" method = "post">
+                    <p>OPCUA Server:</p>
+                    <p><input type = "text" name = "url" /></p>
+                    <p><input type = "submit" value = "submit" /></p>
+                </form>
+            </body>
+        </html>
+    """
+    
 @app.route('/disconnect', methods=['GET'])
 def disconnect():
     uaclient.disconnect()
