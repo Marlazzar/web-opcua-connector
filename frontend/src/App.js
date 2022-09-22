@@ -1,30 +1,31 @@
-import './App.css';
+import "./App.css";
 import React, { useEffect, useState } from "react";
-import { ConnectBar } from './components/ConnectBar'
+import { ConnectBar } from "./components/ConnectBar";
+import NodesCard from "./components/NodesCard";
 
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { connected: false };
+    this.handleConnect = this.handleConnect.bind(this);
+  }
 
-function App() {
-  const [data, setData ] = useState(null);
+  handleConnect(event) {
+    event.preventDefault();
+    this.setState((state) => ({ connected: !state.connected }));
+  }
 
-  useEffect(() => {
-    fetch('/home').then((response) => {
-      if (!response.ok) {
-        throw new Error(
-          "http error: status is ${response.status}"
-        );
-      }
-      return response.json();
-    })
-    .then((acutalData) => console.log(acutalData))
-    .catch((err) => console.log(err.message));
-  }, []);
-
-  return (
-    <div className="App">
-      <ConnectBar/>
-      Hello
-    </div>
-  );
+  render() {
+    return (
+      <div className="App">
+        <ConnectBar
+          connected={this.state.connected}
+          onConnect={this.handleConnect}
+        />
+        {this.state.connected ? <NodesCard /> : "Not Connected"}
+      </div>
+    );
+  }
 }
 
 export default App;
