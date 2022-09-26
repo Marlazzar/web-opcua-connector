@@ -1,5 +1,7 @@
 import flask
 from flask import request, jsonify
+import sys
+sys.path.insert(0,'..')
 from opcua.opcua_client import UaClient
 from methods import generate_tree, create_desc_dict
 
@@ -11,19 +13,26 @@ uaclient = UaClient()
 
 
 @app.route('/', methods=['GET'])
-def home():
+def default():
     return 'home'
 
+@app.route('/home', methods=['GET'])
+def home():
+    return jsonify("home")
 
 @app.route('/connect', methods=['GET', 'POST'])
 def connect():
-    url = request.form['url']
+    url = request.json['url']
+    print(url)
     if request.method == 'POST':
-        uaclient.connect(url)
+        try:
+            uaclient.connect(url)
+        except Exception as e:
+            return str(e)
     if uaclient._connected:
-        return "connection success"
+        return jsonify("connected")
     else:
-        return 'connection failed'
+        return jsonify("not connected")
 
 @app.route("/post_connect")
 def post_connect():
@@ -42,7 +51,7 @@ def post_connect():
 @app.route('/disconnect', methods=['GET'])
 def disconnect():
     uaclient.disconnect()
-    return 'disconnected'
+    return jsonify("disconnected")
 
 
 @app.route('/children')
