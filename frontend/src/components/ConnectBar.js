@@ -31,6 +31,12 @@ function DisconnectButton(props) {
 }
 
 export class ConnectBar extends React.Component {
+  /* This component shows a Textfield where the user can specify the url of
+  the opcua server. 
+  Property: 
+  onConnect: method that will be called, when the user clicks "connect"
+  connected: boolean. true, if already connected to a opcua server.
+  */
   constructor(props) {
     super(props);
     this.state = {
@@ -48,6 +54,7 @@ export class ConnectBar extends React.Component {
   }
 
   handleConnect(event) {
+    event.preventDefault()
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -63,12 +70,15 @@ export class ConnectBar extends React.Component {
       .then((acutalData) => {
         console.log(acutalData);
         this.setState({ data: acutalData });
+        if (acutalData == "connected") {
+          this.props.onConnect(event)
+        }
       })
       .catch((err) => console.log(err.message));
-    this.props.onConnect(event);
   }
 
   handleDisconnect(event) {
+    event.preventDefault()
     fetch("/disconnect")
       .then((response) => {
         if (!response.ok) {
@@ -78,7 +88,6 @@ export class ConnectBar extends React.Component {
       })
       .then((acutalData) => console.log(acutalData))
       .catch((err) => console.log(err.message));
-    event.preventDefault();
     this.props.onConnect(event);
   }
 

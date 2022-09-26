@@ -68,7 +68,7 @@ export default function NodesCard() {
   const [nodes, setNodes] = useState([]);
 
   useEffect(() => {
-    fetch("/children?ns=0&id=84")
+     fetch("/children?ns=0&id=84")
       .then((response) => {
         if (!response.ok) {
           throw new Error("http error");
