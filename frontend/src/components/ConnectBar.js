@@ -63,7 +63,7 @@ export class ConnectBar extends React.Component {
     fetch("/connect", requestOptions)
       .then((response) => {
         if (!response.ok) {
-          throw new Error("http error");
+          throw new Error("http error " + response.status);
         }
         return response.json();
       })

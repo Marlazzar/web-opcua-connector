@@ -4,12 +4,15 @@ import sys
 sys.path.insert(0,'..')
 from opcua.opcua_client import UaClient
 from methods import generate_tree, create_desc_dict
+import logging
+
+logger = logging.getLogger(__name__)
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 uaclient = UaClient()
-#url = "opc.tcp://localhost:4840/freeopcua/server/"
+default_url = "opc.tcp://localhost:4840/freeopcua/server/"
 
 
 @app.route('/', methods=['GET'])
@@ -28,31 +31,28 @@ def connect():
         try:
             uaclient.connect(url)
         except Exception as e:
-            return str(e)
+            return "failed to connect to opcua server", 404
     if uaclient._connected:
         return jsonify("connected")
     else:
         return jsonify("not connected")
 
-@app.route("/post_connect")
-def post_connect():
-    return """
-        <html>
-            <body>
-                <form action = "http://localhost:5000/connect" method = "post">
-                    <p>OPCUA Server:</p>
-                    <p><input type = "text" name = "url" /></p>
-                    <p><input type = "submit" value = "submit" /></p>
-                </form>
-            </body>
-        </html>
-    """
-    
+@app.route("/temporary_connect", methods=['GET'])
+def temporary_connect():
+    uaclient.connect(default_url)
+    return jsonify(uaclient._connected)
+
 @app.route('/disconnect', methods=['GET'])
 def disconnect():
     uaclient.disconnect()
     return jsonify("disconnected")
 
+@app.route('/root', methods=['GET'])
+def root():
+    root = uaclient.client.nodes.root
+    description = uaclient.get_node_desc(root)
+    description = create_desc_dict(description)
+    return jsonify(description)
 
 @app.route('/children')
 def get_children():
@@ -84,13 +84,13 @@ def tree():
 
 @app.route('/nodes')
 def get_node_desc():
+    # this method returns the entire description object for a node
     if 'id' in request.args and 'ns' in request.args:
         id = request.args['id']
         ns = request.args['ns']
         if uaclient._connected:
             node = uaclient.get_node(f"ns={ns};i={id}")
             desc = UaClient.get_node_desc(node)
-            desc = create_desc_dict(desc)
             return jsonify(desc)
         return "client not connected"
     else:
