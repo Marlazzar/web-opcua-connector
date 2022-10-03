@@ -1,6 +1,7 @@
 import flask
 from flask import request, jsonify
 import sys
+from asyncua import ua
 sys.path.insert(0,'..')
 from opcua.opcua_client import UaClient
 from methods import generate_tree, create_desc_dict
@@ -83,18 +84,18 @@ def tree():
         return "specify id and ns (namespace)"
 
 @app.route('/nodes')
-def get_node_desc():
-    # this method returns the entire description object for a node
+def get_node_attributes():
+    # this method returns all the attributes of the node
     if 'id' in request.args and 'ns' in request.args:
         id = request.args['id']
         ns = request.args['ns']
         if uaclient._connected:
             node = uaclient.get_node(f"ns={ns};i={id}")
-            desc = UaClient.get_node_desc(node)
-            return jsonify(desc)
-        return "client not connected"
+            attributes = UaClient.get_all_attributes(node)
+            return jsonify(attributes)
+        return jsonify("client not connected")
     else:
-        return "specify id and ns (namespace)"
+        return jsonify("specify id and ns (namespace)")
 
 
 if __name__ == '__main__':

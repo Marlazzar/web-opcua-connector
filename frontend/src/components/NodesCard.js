@@ -83,7 +83,7 @@ export default function NodesCard() {
   }, []);
 
   return (
-    <Card>
+    <Card sx={{minWidth: 300}}>
       <CardHeader>
         <Typography gutterBottom variant="h5" component="div">
           Nodes

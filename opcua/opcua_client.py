@@ -4,6 +4,7 @@ import logging
 from asyncua import ua
 from asyncua.sync import Client, SyncNode
 from asyncua import crypto
+from asyncua.common.ua_utils import val_to_string
 from asyncua.tools import endpoint_to_strings
 
 logger = logging.getLogger(__name__)
@@ -139,13 +140,73 @@ class UaClient(object):
         desc.TypeDefinition = ua.TwoByteNodeId(ua.ObjectIds.FolderType)
         return desc
 
+    # from FreeOpcUas' opcua-widgets/attrs_widget.py
+    @staticmethod
+    def get_all_attributes(node):
+        attrs = [attr for attr in ua.AttributeIds]
+        dvs = node.read_attributes(attrs)
+        # get list of (attributename, datavalue)
+        res = []
+        for idx, dv in enumerate(dvs):
+            if dv.StatusCode.is_good():
+                res.append((attrs[idx], dv))
+        # show attributes
+        final_results = []
+        for attr, dv in res:
+            try:
+                # show as many attributes as possible
+                # is the attribute a value?
+                if attr == ua.AttributeIds.Value:
+                    name = "Value"
+                    # TODO: This wouldn't work for more complicated Value objects
+                    value_string = dv.Value.Value
+                    final_results.append((name, value_string))
+                # is it the datatype?
+                elif attr == ua.AttributeIds.DataType:
+                    if dv.Value.Value is None:
+                        break
+                    name = attr.name
+                    data_string = dv.Value.Value
+                    # TODO: This does NOT display the information I want
+                    # It just gives some nested string, not the type of the datavalue in this node...
+                    #final_results.append((name, data_string))
+                else:
+                    if attr in (ua.AttributeIds.AccessLevel,
+                      ua.AttributeIds.UserAccessLevel,
+                      ua.AttributeIds.WriteMask,
+                      ua.AttributeIds.UserWriteMask,
+                      ua.AttributeIds.EventNotifier):
+                        string = enum_to_string(attr, dv.Value.Value)
+                    else:
+                        string = val_to_string(dv.Value.Value)
+                    attr_name = attr.name
+                    value = string
+                    final_results.append((attr_name, value))
+            except Exception as ex:
+                logger.exception(f"Exception while displaying attribute {attr} with value {dv} for node {node}")
+        return final_results
+
+
+def attr_to_enum(attr):
+    attr_name = attr.name
+    if attr_name.startswith("User"):
+        attr_name = attr_name[4:]
+    return getattr(ua, attr_name)
+
+
+def enum_to_string(attr, val):
+    attr_enum = attr_to_enum(attr)
+    string = ", ".join([e.name for e in attr_enum.parse_bitfield(val)])
+    return string
+        
+
 if __name__ == '__main__':
     uaclient = UaClient()
     url = "opc.tcp://localhost:4840/freeopcua/server/"
     uaclient.connect(url)
-    root = uaclient.client.nodes.root
-    logger.info("logging")
-    print("root %r", root.aio_obj)
-    print("connected")
+    node = uaclient.get_node("ns=2;i=14")
+    attributes = UaClient.get_all_attributes(node)
+    #attributes = [a.read_value() for a in attributes]
+    print(attributes)
     uaclient.disconnect()
     print("disconnected")
