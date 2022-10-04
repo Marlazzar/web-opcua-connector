@@ -1,4 +1,5 @@
 # initial code from https://github.com/FreeOpcUa/opcua-client-gui/blob/master/uaclient/uaclient.py
+from lib2to3.pytree import Node
 import logging
 
 from asyncua import ua
@@ -6,6 +7,7 @@ from asyncua.sync import Client, SyncNode
 from asyncua import crypto
 from asyncua.common.ua_utils import val_to_string
 from asyncua.tools import endpoint_to_strings
+from asyncua.common import Node
 
 logger = logging.getLogger(__name__)
 
@@ -141,35 +143,29 @@ class UaClient(object):
         return desc
 
     # from FreeOpcUas' opcua-widgets/attrs_widget.py
-    @staticmethod
-    def get_all_attributes(node):
-        attrs = [attr for attr in ua.AttributeIds]
+    def get_all_attributes(self, node, all=True, attributes=[]):
+        # default behaviour: send all the attributes in a list
+        # if all=False: send only attributes specified in attributes parameter
+        if all:
+            attrs = [attr for attr in ua.AttributeIds]
+        else:
+            attrs = attributes
         dvs = node.read_attributes(attrs)
         # get list of (attributename, datavalue)
         res = []
         for idx, dv in enumerate(dvs):
             if dv.StatusCode.is_good():
                 res.append((attrs[idx], dv))
-        # show attributes
         final_results = []
+        # try to get the datavalues in a readable string
         for attr, dv in res:
             try:
-                # show as many attributes as possible
                 # is the attribute a value?
                 if attr == ua.AttributeIds.Value:
                     name = "Value"
                     # TODO: This wouldn't work for more complicated Value objects
                     value_string = dv.Value.Value
                     final_results.append((name, value_string))
-                # is it the datatype?
-                elif attr == ua.AttributeIds.DataType:
-                    if dv.Value.Value is None:
-                        break
-                    name = attr.name
-                    data_string = dv.Value.Value
-                    # TODO: This does NOT display the information I want
-                    # It just gives some nested string, not the type of the datavalue in this node...
-                    #final_results.append((name, data_string))
                 else:
                     if attr in (ua.AttributeIds.AccessLevel,
                       ua.AttributeIds.UserAccessLevel,
@@ -177,6 +173,14 @@ class UaClient(object):
                       ua.AttributeIds.UserWriteMask,
                       ua.AttributeIds.EventNotifier):
                         string = enum_to_string(attr, dv.Value.Value)
+                    elif isinstance(dv.Value.Value, ua.LocalizedText):
+                        string = dv.Value.Value.Text
+                    elif attr == ua.AttributeIds.DataType:
+                        # opcua uses nodes to define datatypes. The displayname of the node is the
+                        # name of the datatype. The attribute DataType holds a NodeId Object referencing
+                        # the dataype node.
+                        node = self.get_node(dv.Value.Value)
+                        string = node.read_attribute(ua.AttributeIds.DisplayName).Value.Value.Text
                     else:
                         string = val_to_string(dv.Value.Value)
                     attr_name = attr.name
@@ -205,8 +209,8 @@ if __name__ == '__main__':
     url = "opc.tcp://localhost:4840/freeopcua/server/"
     uaclient.connect(url)
     node = uaclient.get_node("ns=2;i=14")
-    attributes = UaClient.get_all_attributes(node)
-    #attributes = [a.read_value() for a in attributes]
+    attributes = uaclient.get_all_attributes(node)
     print(attributes)
+    print(attributes[0][1])
     uaclient.disconnect()
     print("disconnected")

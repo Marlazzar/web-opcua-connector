@@ -91,7 +91,7 @@ def get_node_attributes():
         ns = request.args['ns']
         if uaclient._connected:
             node = uaclient.get_node(f"ns={ns};i={id}")
-            attributes = UaClient.get_all_attributes(node)
+            attributes = uaclient.get_all_attributes(node)
             return jsonify(attributes)
         return jsonify("client not connected")
     else:
