@@ -2,8 +2,8 @@ import "./App.css";
 import React, { useEffect, useState } from "react";
 import { ConnectBar } from "./components/ConnectBar";
 import NodesCard from "./components/NodesCard";
-import NodesDetailsCard from "./components/NodeDetailsCard"
-import { Stack, Item } from "@mui/material"
+import NodesDetailsCard from "./components/NodeDetailsCard";
+import { Stack, Item } from "@mui/material";
 
 class App extends React.Component {
   constructor(props) {
@@ -20,10 +20,12 @@ class App extends React.Component {
   render() {
     let content;
     if (this.state.connected) {
-      content = <Stack direction="row" spacing={2} padding={2}>
-        <NodesCard/>
-      <NodesDetailsCard nodeid={84} namespace={0} selected={true}/>
-      </Stack>;
+      content = (
+        <Stack direction="row" spacing={2} padding={2}>
+          <NodesCard />
+          <NodesDetailsCard nodeid={14} namespace={2} selected={true} />
+        </Stack>
+      );
     } else {
       content = <p>Not Connected</p>;
     }

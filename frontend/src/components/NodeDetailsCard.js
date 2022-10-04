@@ -40,6 +40,7 @@ export default class NodeDetailsCard extends React.Component {
       .catch((err) => console.log(err.message));
   }
 
+    // TODO: I only want the data to get send once
   componentDidUpdate() {
     // get nodeid and namespace of the selected node and select bool
     const nodeid = this.props.nodeid;
@@ -66,7 +67,7 @@ export default class NodeDetailsCard extends React.Component {
             Node Attributes
           </Typography>
           <TableContainer>
-            <Table sx={{ minWidth: 300 }} aria-lable="simple table">
+            <Table sx={{ minWidth: 400 }} aria-lable="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell>AttributeName</TableCell>
