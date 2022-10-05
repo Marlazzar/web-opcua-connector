@@ -8,6 +8,7 @@ import {
   CardHeader,
   Box,
   ListItemButton,
+  ListItem,
   ListItemText,
   Collapse,
 } from "@mui/material";
@@ -19,6 +20,7 @@ class Children extends React.Component {
     super(props);
     this.state = { children: [], expanded: false, fetched: false };
     this.handleExpand = this.handleExpand.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
   }
 
   handleExpand(event) {
@@ -41,13 +43,30 @@ class Children extends React.Component {
     }
   }
 
+  handleSelect(event, selection) {
+    event.preventDefault();
+    this.props.onSelect(event, selection);
+  }
+
   render() {
     return (
       <List>
-        <ListItemButton id={this.props.nodeid} onClick={this.handleExpand}>
-          <ListItemText primary={this.props.displayname} />
-          {this.state.expanded ? <ExpandLess /> : <ExpandMore />}
-        </ListItemButton>
+        <ListItem>
+          {/* Pass nodeid and namespace to state of parent component by calling handleSelect. */}
+          <ListItemButton
+            onClick={(e) =>
+              this.handleSelect(e, {
+                nodeid: this.props.nodeid,
+                ns: this.props.namespace,
+              })
+            }
+          >
+            {this.props.displayname}
+          </ListItemButton>
+          <ListItemButton onClick={this.handleExpand} sx={{ maxWidth: 50 }}>
+            {this.state.expanded ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+        </ListItem>
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
           <List component="div" disablePadding sx={{ pl: 4 }}>
             {this.state.children.map((node) => (
@@ -55,6 +74,7 @@ class Children extends React.Component {
                 namespace={node["Namespace"]}
                 nodeid={node["NodeId"]}
                 displayname={node["DisplayName"]}
+                onSelect={this.props.onSelect}
               />
             ))}
           </List>
@@ -64,11 +84,11 @@ class Children extends React.Component {
   }
 }
 
-export default function NodesCard() {
+export default function NodesCard(props) {
   const [nodes, setNodes] = useState([]);
 
   useEffect(() => {
-     fetch("/children?ns=0&id=84")
+    fetch("/children?ns=0&id=84")
       .then((response) => {
         if (!response.ok) {
           throw new Error("http error");
@@ -82,29 +102,26 @@ export default function NodesCard() {
       .catch((err) => console.log(err.message));
   }, []);
 
+    const handleSelect = (event, selection) => {
+      event.preventDefault();
+      props.onSelect(event, selection);
+    }
+
   return (
-    <Card sx={{minWidth: 300}}>
-      <CardHeader>
+    <Card sx={{ minWidth: 300 }}>
+      <Box padding={1}>
         <Typography gutterBottom variant="h5" component="div">
           Nodes
         </Typography>
-      </CardHeader>
-      <Box padding={1}>
         <List
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-          component="nav"
-          aria-labelledby="nested-list-subheader"
-          subheader={
-            <ListSubheader component="div" id="nested-list-subheader">
-              Nodes
-            </ListSubheader>
-          }
         >
           {nodes.map((node) => (
             <Children
               namespace={node["Namespace"]}
               nodeid={node["NodeId"]}
               displayname={node["DisplayName"]}
+              onSelect={(e, selection) => handleSelect(e, selection)}
             />
           ))}
         </List>

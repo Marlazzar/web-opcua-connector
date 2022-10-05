@@ -65,7 +65,7 @@ def get_children():
         node = uaclient.get_node(f"ns={ns};i={id}")
         children = uaclient.get_children(node)
         children = [create_desc_dict(ch) for ch in children]
-        return children
+        return jsonify(children)
     else:
         return "specify id and ns (namespace)"
 
