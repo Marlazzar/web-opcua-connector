@@ -19,12 +19,10 @@ export default function NodeDetailsCard(props) {
   */
   const [attributes, setAttributes] = useState([]);
 
+  // data should be updated whenever props change...
   useEffect(() => {
-    // get nodeid and namespace of the selected node and select bool
-    const nodeid = props.nodeid;
-    const namespace = props.namespace;
-
-    fetch("/nodes?id=" + nodeid + "&ns=" + namespace)
+    // get nodeid and namespace of the selected node
+    fetch("/nodes?id=" + props.nodeid + "&ns=" + props.namespace)
       .then((response) => {
         if (!response.ok) {
           throw new Error("http error " + response.status);
@@ -36,7 +34,7 @@ export default function NodeDetailsCard(props) {
         setAttributes(node_attributes);
       })
       .catch((err) => console.log(err.message));
-  }, []);
+  }, [props.nodeid, props.namespace]);
 
   return (
     <Card>
