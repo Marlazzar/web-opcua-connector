@@ -43,6 +43,7 @@ class Children extends React.Component {
     }
   }
 
+  // tell parentComponent (NodesCard) the new selection
   handleSelect(event, selection) {
     event.preventDefault();
     this.props.onSelect(event, selection);
@@ -52,13 +53,16 @@ class Children extends React.Component {
     return (
       <List>
         <ListItem>
-          {/* Pass nodeid and namespace to state of parent component by calling handleSelect. */}
+          {/* Check whether the current node is the selected node */}
           <ListItemButton
             onClick={(e) =>
               this.handleSelect(e, {
                 nodeid: this.props.nodeid,
                 ns: this.props.namespace,
               })
+            }
+            selected={
+              this.props.nodeid == this.props.selection.nodeid ? true : false
             }
           >
             {this.props.displayname}
@@ -75,6 +79,7 @@ class Children extends React.Component {
                 nodeid={node["NodeId"]}
                 displayname={node["DisplayName"]}
                 onSelect={this.props.onSelect}
+                selection={this.props.selection}
               />
             ))}
           </List>
@@ -86,8 +91,10 @@ class Children extends React.Component {
 
 export default function NodesCard(props) {
   const [nodes, setNodes] = useState([]);
+  const [selection, setSelection] = useState({ nodeid: -1, ns: -1 });
 
   useEffect(() => {
+    // todo: get root
     fetch("/children?ns=0&id=84")
       .then((response) => {
         if (!response.ok) {
@@ -102,10 +109,12 @@ export default function NodesCard(props) {
       .catch((err) => console.log(err.message));
   }, []);
 
-    const handleSelect = (event, selection) => {
-      event.preventDefault();
-      props.onSelect(event, selection);
-    }
+  // tell parent component (App) the new selection
+  const handleSelect = (event, selection) => {
+    event.preventDefault();
+    props.onSelect(event, selection);
+    setSelection(selection);
+  };
 
   return (
     <Card sx={{ minWidth: 300 }}>
@@ -117,11 +126,14 @@ export default function NodesCard(props) {
           sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
         >
           {nodes.map((node) => (
+            // selection needs to be managed by NodesCard, because only one selection
+            // for the entire NodesCard is possible.
             <Children
               namespace={node["Namespace"]}
               nodeid={node["NodeId"]}
               displayname={node["DisplayName"]}
               onSelect={(e, selection) => handleSelect(e, selection)}
+              selection={selection}
             />
           ))}
         </List>
