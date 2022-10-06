@@ -85,13 +85,15 @@ def tree():
 
 @app.route('/nodes')
 def get_node_attributes():
-    # this method returns all the attributes of the node
+    # this method returns specified attributes of the node
+    # what attributes do we want? 
+    attrs = [ua.AttributeIds.BrowseName, ua.AttributeIds.DisplayName, ua.AttributeIds.DataType, ua.AttributeIds.MinimumSamplingInterval, ua.AttributeIds.NodeId, ua.AttributeIds.Value, ua.AttributeIds.NodeClass]
     if 'id' in request.args and 'ns' in request.args:
         id = request.args['id']
         ns = request.args['ns']
         if uaclient._connected:
             node = uaclient.get_node(f"ns={ns};i={id}")
-            attributes = uaclient.get_all_attributes(node)
+            attributes = uaclient.get_all_attributes(node, all=False, attributes=attrs)
             return jsonify(attributes)
         return jsonify("client not connected")
     else:
