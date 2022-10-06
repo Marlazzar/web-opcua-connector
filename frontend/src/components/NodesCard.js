@@ -73,6 +73,7 @@ class Children extends React.Component {
         </ListItem>
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
           <List component="div" disablePadding sx={{ pl: 4 }}>
+            {/* Click button, to show children of clicked node - like this, we can browse through the entire node tree. */}
             {this.state.children.map((node) => (
               <Children
                 namespace={node["Namespace"]}
@@ -94,19 +95,31 @@ export default function NodesCard(props) {
   const [selection, setSelection] = useState({ nodeid: -1, ns: -1 });
 
   useEffect(() => {
-    // todo: get root
-    fetch("/children?ns=0&id=84")
+    // get nodeid and namespace of root
+    fetch("/root")
       .then((response) => {
         if (!response.ok) {
-          throw new Error("http error");
+          throw new Error("http error: root not found");
         }
         return response.json();
       })
-      .then((acutalData) => {
-        console.log(acutalData);
-        setNodes(acutalData);
-      })
-      .catch((err) => console.log(err.message));
+      .then((root) => {
+        console.log(root);
+        const id = root.NodeId;
+        const ns = root.Namespace;
+        fetch("/children?ns=" + ns + "&id=" + id)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("http error: children of root not found");
+            }
+            return response.json();
+          })
+          .then((acutalData) => {
+            console.log(acutalData);
+            setNodes(acutalData);
+          })
+          .catch((err) => console.log(err.message));
+      });
   }, []);
 
   // tell parent component (App) the new selection

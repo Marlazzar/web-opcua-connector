@@ -8,7 +8,7 @@ import { Stack, Item } from "@mui/material";
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { connected: false, selectedNode: { nodeid: 84, ns: 0 } };
+    this.state = { connected: false, selectedNode: { nodeid: -1, ns: -1 } };
     this.handleConnect = this.handleConnect.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
   }

@@ -54,7 +54,7 @@ export default function NodeDetailsCard(props) {
     <Card>
       <Box padding={1}>
         <Typography gutterBottom variant="h5" component="div">
-          Node Attributes
+          {props.nodeid == -1 ? "No Node Selected" : "Node Attributes"}
         </Typography>
         <TableContainer>
           <Table sx={{ minWidth: 400 }} aria-lable="simple table">
@@ -65,19 +65,22 @@ export default function NodeDetailsCard(props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {attributes.map((attr) => (
-                <TableRow
-                  key={attr[0]}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell>{attr[0]}</TableCell>
-                  {attr[0] == "Value" ? (
-                    <ValueCell value={attr[1]} />
-                  ) : (
-                    <TableCell align="right">{attr[1]}</TableCell>
-                  )}
-                </TableRow>
-              ))}
+              {attributes.map(
+                (attr) =>
+                  attr[1] != "" && (
+                    <TableRow
+                      key={attr[0]}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell>{attr[0]}</TableCell>
+                      {attr[0] == "Value" ? (
+                        <ValueCell value={attr[1]} />
+                      ) : (
+                        <TableCell align="right">{attr[1]}</TableCell>
+                      )}
+                    </TableRow>
+                  )
+              )}
             </TableBody>
           </Table>
         </TableContainer>
