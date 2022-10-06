@@ -18,11 +18,8 @@ default_url = "opc.tcp://localhost:4840/freeopcua/server/"
 
 @app.route('/', methods=['GET'])
 def default():
-    return 'home'
+    return jsonify("this is my flask backend")
 
-@app.route('/home', methods=['GET'])
-def home():
-    return jsonify("home")
 
 @app.route('/connect', methods=['GET', 'POST'])
 def connect():
@@ -38,6 +35,7 @@ def connect():
     else:
         return jsonify("not connected")
 
+# only for debugging backend without frontend
 @app.route("/temporary_connect", methods=['GET'])
 def temporary_connect():
     uaclient.connect(default_url)
@@ -69,19 +67,6 @@ def get_children():
     else:
         return "specify id and ns (namespace)"
 
-
-@app.route('/tree')
-def tree():
-    if not uaclient._connected:
-        return 'not connected'
-    if 'id' in request.args and 'ns' in request.args:
-        id = request.args['id']
-        ns = request.args['ns']
-        node = uaclient.get_node(f"ns={ns};i={id}")
-        tree = generate_tree(node, uaclient)
-        return jsonify(tree)
-    else:
-        return "specify id and ns (namespace)"
 
 @app.route('/nodes')
 def get_node_attributes():
