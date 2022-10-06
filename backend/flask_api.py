@@ -4,8 +4,9 @@ import sys
 from asyncua import ua
 sys.path.insert(0,'..')
 from opcua.opcua_client import UaClient
-from methods import generate_tree, create_desc_dict
+from methods import create_desc_dict
 import logging
+from DatachangeHandler import DatachangeHandler
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +15,8 @@ app.config["DEBUG"] = True
 
 uaclient = UaClient()
 default_url = "opc.tcp://localhost:4840/freeopcua/server/"
+
+handler = DatachangeHandler()
 
 
 @app.route('/', methods=['GET'])
@@ -84,6 +87,25 @@ def get_node_attributes():
     else:
         return jsonify("specify id and ns (namespace)")
 
+
+@app.route('/subscribe')
+def subscribe():
+    # datachange subscription
+    if not uaclient._connected:
+        return jsonify("client not connected")
+    if 'id' in request.args and 'ns' in request.args:
+        id = request.args['id']
+        ns = request.args['ns']
+        node = uaclient.get_node(f"ns={ns};i={id}")
+        sub = uaclient.client.create_subscription(100, handler)
+        handle = sub.subscribe_data_change(node)
+        return jsonify("subscribed")
+    else:
+        return jsonify("specify id and ns")
+
+@app.route('/get_sub')
+def get_sub():
+    return jsonify(handler.subscribed_val)
 
 if __name__ == '__main__':
     app.run(debug=True)
