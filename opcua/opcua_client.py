@@ -163,9 +163,9 @@ class UaClient(object):
                 # is the attribute a value?
                 if attr == ua.AttributeIds.Value:
                     name = "Value"
-                    # TODO: This wouldn't work for more complicated Value objects
-                    value_string = dv.Value.Value
-                    final_results.append((name, value_string))
+                    # Note: value_obj can contain pretty complicated structures, like nested lists and dicts
+                    value_obj = dv.Value.Value
+                    final_results.append((name, value_obj))
                 else:
                     if attr in (ua.AttributeIds.AccessLevel,
                       ua.AttributeIds.UserAccessLevel,
@@ -208,9 +208,11 @@ if __name__ == '__main__':
     uaclient = UaClient()
     url = "opc.tcp://localhost:4840/freeopcua/server/"
     uaclient.connect(url)
-    node = uaclient.get_node("ns=2;i=14")
+    node = uaclient.get_node("ns=0;i=7597")
     attributes = uaclient.get_all_attributes(node)
     print(attributes)
-    print(attributes[0][1])
+    for tuple in attributes:
+        if tuple[0] == 'Value':
+            print(type(tuple[1][0]))
     uaclient.disconnect()
     print("disconnected")
