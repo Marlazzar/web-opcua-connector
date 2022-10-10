@@ -11,6 +11,7 @@ import {
   TableContainer,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 
 function ValueCell(props) {
   const value = props.value;
@@ -31,6 +32,7 @@ export default function NodeDetailsCard(props) {
   this component should change too. Thus it expects the selected node as a property.
   The selection should be in the state of the parent component of NodesDetailsCard.
   */
+  // TODO: Let user subscribe over this card, but only if selected node is a variable.
   const [attributes, setAttributes] = useState([]);
 
   // data should be updated whenever props change...
@@ -56,6 +58,7 @@ export default function NodeDetailsCard(props) {
         <Typography gutterBottom variant="h5" component="div">
           {props.nodeid == -1 ? "No Node Selected" : "Node Attributes"}
         </Typography>
+        <NotificationsNoneIcon />
         <TableContainer>
           <Table sx={{ minWidth: 400 }} aria-lable="simple table">
             <TableHead>

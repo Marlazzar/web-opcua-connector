@@ -50,6 +50,8 @@ class Children extends React.Component {
   }
 
   render() {
+    const isSelected = this.props.nodeid == this.props.selection.nodeid;
+
     return (
       <List>
         <ListItem>
@@ -61,11 +63,9 @@ class Children extends React.Component {
                 ns: this.props.namespace,
               })
             }
-            selected={
-              this.props.nodeid == this.props.selection.nodeid ? true : false
-            }
+            selected={isSelected}
           >
-            {this.props.displayname}
+            <Typography>{this.props.displayname}</Typography>
           </ListItemButton>
           <ListItemButton onClick={this.handleExpand} sx={{ maxWidth: 50 }}>
             {this.state.expanded ? <ExpandLess /> : <ExpandMore />}
