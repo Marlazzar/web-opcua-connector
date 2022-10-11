@@ -56,7 +56,11 @@ export default function NodeDetailsCard(props) {
     <Card>
       <Box padding={1}>
         <Typography gutterBottom variant="h5" component="div">
-          {props.nodeid == -1 ? "No Node Selected" : "Node Attributes"}
+          {props.nodeid == -1 ? (
+            "No Node Selected"
+          ) : (
+            <div>{props.displayname}</div>
+          )}
         </Typography>
         <NotificationsNoneIcon />
         <TableContainer>

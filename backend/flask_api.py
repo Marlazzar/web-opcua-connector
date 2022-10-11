@@ -58,6 +58,8 @@ def root():
 
 @app.route('/children')
 def get_children():
+    # returns description of all the children of specified node. gives the following child-attributes:
+    # nodeid, namespace, displayname, nodeclass
     if not uaclient._connected:
         return 'not connected'
     if 'id' in request.args and 'ns' in request.args:

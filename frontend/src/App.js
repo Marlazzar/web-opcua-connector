@@ -8,10 +8,15 @@ import { Stack, Item } from "@mui/material";
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { connected: false, selectedNode: { nodeid: -1, ns: -1 } };
+    this.state = {
+      connected: false,
+      selectedNode: { nodeid: -1, ns: -1, displayname: "", nodeclass: -1 },
+    };
     this.handleConnect = this.handleConnect.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
   }
+
+  myobject = { a: "string1", b: "string2" };
 
   handleConnect(event) {
     event.preventDefault();
@@ -37,12 +42,14 @@ class App extends React.Component {
           <NodesDetailsCard
             nodeid={this.state.selectedNode.nodeid}
             namespace={this.state.selectedNode.ns}
+            displayname={this.state.selectedNode.displayname}
           />
         </Stack>
       );
     } else {
       content = <p>Not Connected</p>;
     }
+
     return (
       <div className="App">
         <ConnectBar

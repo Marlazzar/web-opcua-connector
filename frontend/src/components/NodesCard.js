@@ -61,6 +61,8 @@ class Children extends React.Component {
               this.handleSelect(e, {
                 nodeid: this.props.nodeid,
                 ns: this.props.namespace,
+                displayname: this.props.displayname,
+                nodeclass: this.props.nodeclass,
               })
             }
             selected={isSelected}
@@ -79,6 +81,7 @@ class Children extends React.Component {
                 namespace={node["Namespace"]}
                 nodeid={node["NodeId"]}
                 displayname={node["DisplayName"]}
+                nodeclass={node["Nodeclass"]}
                 onSelect={this.props.onSelect}
                 selection={this.props.selection}
               />
@@ -92,7 +95,12 @@ class Children extends React.Component {
 
 export default function NodesCard(props) {
   const [nodes, setNodes] = useState([]);
-  const [selection, setSelection] = useState({ nodeid: -1, ns: -1 });
+  const [selection, setSelection] = useState({
+    nodeid: -1,
+    ns: -1,
+    displayname: "",
+    nodeclass: -1,
+  });
 
   useEffect(() => {
     // get nodeid and namespace of root
@@ -145,6 +153,7 @@ export default function NodesCard(props) {
               namespace={node["Namespace"]}
               nodeid={node["NodeId"]}
               displayname={node["DisplayName"]}
+              nodeclass={node["Nodeclass"]}
               onSelect={(e, selection) => handleSelect(e, selection)}
               selection={selection}
             />
