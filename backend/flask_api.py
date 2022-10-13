@@ -4,7 +4,7 @@ import sys
 from asyncua import ua
 sys.path.insert(0,'..')
 from opcua.opcua_client import UaClient
-from methods import create_desc_dict
+from methods import create_desc_dict, dict_keys_list
 import logging
 from DatachangeHandler import DatachangeHandler
 
@@ -16,7 +16,19 @@ app.config["DEBUG"] = True
 uaclient = UaClient()
 default_url = "opc.tcp://localhost:4840/freeopcua/server/"
 
-handler = DatachangeHandler()
+# subscribednodes will have the following form:
+# dictionary key: (id, ns) value: dict(nodeid, namespace, value, timestamp)
+subscribed_nodes = {}
+# update_datachage method should receive dict(nodeid, namespace, value, timestamp) as parameter and edit
+# this list
+def update_datachange(nodedict):
+    # called once even for const
+    id = nodedict["NodeId"]
+    ns = nodedict["Namespace"]
+    subscribed_nodes[(id,ns)] = nodedict
+
+handler = DatachangeHandler(update_datachange)
+
 
 
 @app.route('/', methods=['GET'])
@@ -26,6 +38,7 @@ def default():
 
 @app.route('/connect', methods=['GET', 'POST'])
 def connect():
+    subscribed_nodes.clear()
     url = request.json['url']
     print(url)
     if request.method == 'POST':
@@ -105,9 +118,29 @@ def subscribe():
     else:
         return jsonify("specify id and ns")
 
+
+# TODO: unsubscribe method
+
 @app.route('/get_sub')
 def get_sub():
-    return jsonify(handler.subscribed_val)
+    if not uaclient._connected:
+        return jsonify("client not connected")
+    if 'id' in request.args and 'ns' in request.args:
+        id = int(request.args['id'])
+        ns = int(request.args['ns'])
+        if (id, ns) not in subscribed_nodes:
+            return jsonify("no subscription found")
+        # this should return the value by the last event...
+        # but if i do it like that, frontend would have to poll this all the time.
+        return jsonify(subscribed_nodes[(id, ns)])
+    else:
+        return jsonify("specify id and ns")
+
+
+@app.route('/subscripted_nodes')
+def subscripted_nodes():
+    return jsonify(dict_keys_list(subscribed_nodes))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { ConnectBar } from "./components/ConnectBar";
 import NodesCard from "./components/NodesCard";
 import NodesDetailsCard from "./components/NodeDetailsCard";
+import SubscriptionsCard from "./components/SubscriptionsCard";
 import { Stack, Item } from "@mui/material";
 
 class App extends React.Component {
@@ -44,6 +45,7 @@ class App extends React.Component {
             namespace={this.state.selectedNode.ns}
             displayname={this.state.selectedNode.displayname}
           />
+          <SubscriptionsCard />
         </Stack>
       );
     } else {

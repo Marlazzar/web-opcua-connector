@@ -4,7 +4,7 @@ import copy
 import logging
 from datetime import datetime
 import time
-from math import sin
+from math import sin, cos
 
 
 from asyncua import ua, uamethod, Server
@@ -87,7 +87,9 @@ async def main():
     # create directly some objects and variables
     myobj = await server.nodes.objects.add_object(idx, "MyObject")
     myvar = await myobj.add_variable(idx, "MyVariable", 6.7)
+    mycosvar = await myobj.add_variable(idx, "MyCosVariable", 2.5)
     await myvar.set_writable()    # Set MyVariable to be writable by clients
+    await mycosvar.set_writable()
     mystringvar = await myobj.add_variable(idx, "MyStringVariable", "Really nice string")
     await mystringvar.set_writable()    # Set MyVariable to be writable by clients
     mydtvar = await myobj.add_variable(idx, "MyDateTimeVar", datetime.utcnow())
@@ -127,6 +129,7 @@ async def main():
         while True:
             await asyncio.sleep(0.1)
             await server.write_attribute_value(myvar.nodeid, ua.DataValue(sin(time.time())))
+            await server.write_attribute_value(mycosvar.nodeid, ua.DataValue(cos(time.time())) )
 
 
 if __name__ == "__main__":

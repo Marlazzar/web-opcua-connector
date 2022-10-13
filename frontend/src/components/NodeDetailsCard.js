@@ -9,6 +9,7 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  Button,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
@@ -34,6 +35,7 @@ export default function NodeDetailsCard(props) {
   */
   // TODO: Let user subscribe over this card, but only if selected node is a variable.
   const [attributes, setAttributes] = useState([]);
+  const [subscribed, setSubscribed] = useState(false);
 
   // data should be updated whenever props change...
   useEffect(() => {
@@ -52,6 +54,21 @@ export default function NodeDetailsCard(props) {
       .catch((err) => console.log(err.message));
   }, [props.nodeid, props.namespace]);
 
+  const subscribe = (event) => {
+    fetch("/subscribe?id=" + props.nodeid + "&ns=" + props.namespace)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("http error " + response.status);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setSubscribed(true);
+      })
+      .catch((err) => console.log(err.message));
+  };
+
   return (
     <Card>
       <Box padding={1}>
@@ -62,7 +79,9 @@ export default function NodeDetailsCard(props) {
             <div>{props.displayname}</div>
           )}
         </Typography>
-        <NotificationsNoneIcon />
+        <Button onClick={subscribe}>
+          <NotificationsNoneIcon />
+        </Button>
         <TableContainer>
           <Table sx={{ minWidth: 400 }} aria-lable="simple table">
             <TableHead>

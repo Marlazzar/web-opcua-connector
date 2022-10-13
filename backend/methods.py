@@ -10,3 +10,8 @@ def create_desc_dict(desc):
     desc_dict["NodeClass"] = str(ua.NodeClass(desc.NodeId.NodeIdType))
     return desc_dict
 
+def dict_keys_list(dict):
+    mylist = []
+    for k in dict.keys():
+        mylist.append(k[0])
+    return mylist
