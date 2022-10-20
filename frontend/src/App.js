@@ -45,7 +45,6 @@ class App extends React.Component {
             namespace={this.state.selectedNode.ns}
             displayname={this.state.selectedNode.displayname}
           />
-          <SubscriptionsCard />
         </Stack>
       );
     } else {
@@ -59,6 +58,7 @@ class App extends React.Component {
           onConnect={this.handleConnect}
         />
         {content}
+        <SubscriptionsCard />
       </div>
     );
   }

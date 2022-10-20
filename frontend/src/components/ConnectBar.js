@@ -54,7 +54,7 @@ export class ConnectBar extends React.Component {
   }
 
   handleConnect(event) {
-    event.preventDefault()
+    event.preventDefault();
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -71,14 +71,14 @@ export class ConnectBar extends React.Component {
         console.log(acutalData);
         this.setState({ data: acutalData });
         if (acutalData == "connected") {
-          this.props.onConnect(event)
+          this.props.onConnect(event);
         }
       })
       .catch((err) => console.log(err.message));
   }
 
   handleDisconnect(event) {
-    event.preventDefault()
+    event.preventDefault();
     fetch("/disconnect")
       .then((response) => {
         if (!response.ok) {

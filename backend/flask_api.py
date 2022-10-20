@@ -2,11 +2,11 @@ import flask
 from flask import request, jsonify
 import sys
 from asyncua import ua
-sys.path.insert(0,'..')
-from opcua.opcua_client import UaClient
+from opcua_client import UaClient
 from methods import create_desc_dict, dict_keys_list
 import logging
 from DatachangeHandler import DatachangeHandler
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +14,7 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 uaclient = UaClient()
+# problem: this ip will probably change. don't know where exampleserver will run...
 default_url = "opc.tcp://localhost:4840/freeopcua/server/"
 
 # subscribednodes will have the following form:
@@ -143,4 +144,4 @@ def subscripted_nodes():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)

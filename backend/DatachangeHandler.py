@@ -1,8 +1,7 @@
 import sys
 import asyncua
 from itsdangerous import BadTimeSignature
-sys.path.insert(0,'..')
-from opcua.opcua_client import UaClient
+from opcua_client import UaClient
 import asyncua.ua.uaerrors as uaerrors
 from datetime import datetime
 

@@ -53,12 +53,10 @@ export default function SubscriptionsCard() {
         return response.json();
       })
       .then((nodes) => {
-        console.log(nodes);
         setSubscriptednodes(nodes);
       })
       .catch((err) => console.log(err.message));
-  });
-
+  }, []);
   return (
     <Card>
       <Box padding={1}>
