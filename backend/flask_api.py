@@ -15,7 +15,7 @@ app.config["DEBUG"] = True
 
 uaclient = UaClient()
 # problem: this ip will probably change. don't know where exampleserver will run...
-default_url = "opc.tcp://localhost:4840/freeopcua/server/"
+default_url = "opc.tcp://localhost:4840/"
 
 # subscribednodes will have the following form:
 # dictionary key: (id, ns) value: dict(nodeid, namespace, value, timestamp)
@@ -36,23 +36,35 @@ handler = DatachangeHandler(update_datachange)
 def default():
     return jsonify("this is my flask backend")
 
+@app.route('/hello', methods=['GET'])
+def hello():
+    return jsonify("Hello Marlene")
+
+# catch all requests to urls that aren't defined
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return jsonify("Backend says there is nada here!"), 500
+
+
 
 @app.route('/connect', methods=['GET', 'POST'])
 def connect():
     subscribed_nodes.clear()
     url = request.json['url']
-    print(url)
     if request.method == 'POST':
         try:
             uaclient.connect(url)
         except Exception as e:
-            return "failed to connect to opcua server", 404
+            return jsonify("failed to connect to opcua server"), 500
     if uaclient._connected:
         return jsonify("connected")
     else:
         return jsonify("not connected")
 
 # only for debugging backend without frontend
+# doesn't work if you run this in a docker container,
+# cause default url references localhost.
 @app.route("/temporary_connect", methods=['GET'])
 def temporary_connect():
     uaclient.connect(default_url)

@@ -19,7 +19,7 @@ function SubscriptionRow(props) {
     fetch("/get_sub?id=" + props.nodeid + "&ns=2")
       .then((response) => {
         if (!response.ok) {
-          throw new Error("http error " + response.status);
+          throw new Error("http error subscribe " + response.status);
         }
         return response.json();
       })

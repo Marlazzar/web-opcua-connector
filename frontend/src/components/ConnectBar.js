@@ -40,7 +40,7 @@ export class ConnectBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      opcua_server_url: "opc.tcp://localhost:4840/freeopcua/server/",
+      opcua_server_url: "opc.tcp://opcua_server:4840/",
       data: [],
     };
 
@@ -63,7 +63,7 @@ export class ConnectBar extends React.Component {
     fetch("/connect", requestOptions)
       .then((response) => {
         if (!response.ok) {
-          throw new Error("http error " + response.status);
+          throw new Error("Http error " + response.status);
         }
         return response.json();
       })

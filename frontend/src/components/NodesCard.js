@@ -31,7 +31,9 @@ class Children extends React.Component {
       fetch("/children?ns=" + this.props.namespace + "&id=" + this.props.nodeid)
         .then((response) => {
           if (!response.ok) {
-            throw new Error("http error");
+            throw new Error(
+              "http error while fetching children: " + response.status
+            );
           }
           return response.json();
         })

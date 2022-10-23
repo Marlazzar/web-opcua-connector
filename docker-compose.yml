@@ -1,24 +1,17 @@
 version: "3.7"
 
 services:
-  opcua_server:
-    image: "opcua"
-    container_name: "opcua_test_server"
-    environment:
-      - MESSAGE="hello from opcua_server"
-    ports:
-      - "4840:4840"
   backend:
-    image: "flaskapp"
+    build: "./backend"
     environment:
-      - MESSAGE="hello from flask backend"
-    depends_on:
-      - "opcua_server"
+      - DEBUG=True
     ports:
       - "5000:5000"
 
   frontend:
-    image: "reactapp"
+    build: "./frontend"
+    environment:
+      - DEBUG=True
     depends_on:
       - "backend"
     ports:

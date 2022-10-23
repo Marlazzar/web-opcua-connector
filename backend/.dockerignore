@@ -171,7 +171,3 @@ venv/
 */*/*.swp
 
 */*/*/*.swp
-
-# My stuff
-frontend/
-opcua/
