@@ -24,7 +24,7 @@ function SubscriptionRow(props) {
         return response.json();
       })
       .then((newnodedict) => {
-        console.log(newnodedict);
+        //console.log(newnodedict);
         setNodedict(newnodedict);
       })
       .catch((err) => console.log(err.message));
@@ -45,7 +45,7 @@ export default function SubscriptionsCard() {
   // data should be updated whenever props change...
   useEffect(() => {
     // get nodeid and namespace of the selected node
-    fetch("/subscripted_nodes")
+    fetch("/subscribed_nodes")
       .then((response) => {
         if (!response.ok) {
           throw new Error("http error " + response.status);
@@ -56,7 +56,8 @@ export default function SubscriptionsCard() {
         setSubscriptednodes(nodes);
       })
       .catch((err) => console.log(err.message));
-  }, []);
+  });
+
   return (
     <Card>
       <Box padding={1}>

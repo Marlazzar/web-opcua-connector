@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 function ValueCell(props) {
   const value = props.value;
@@ -54,6 +55,26 @@ export default function NodeDetailsCard(props) {
       .catch((err) => console.log(err.message));
   }, [props.nodeid, props.namespace]);
 
+  // data should be updated whenever props change...
+  useEffect(() => {
+    // get nodeid and namespace of the selected node
+    fetch("/subscribed_nodes")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("http error " + response.status);
+        }
+        return response.json();
+      })
+      .then((nodes) => {
+        if (nodes.includes(props.nodeid)) {
+          setSubscribed(true);
+        } else {
+          setSubscribed(false);
+        }
+      })
+      .catch((err) => console.log(err.message));
+  }, [props.nodeid, props.namespace]);
+
   const subscribe = (event) => {
     fetch("/subscribe?id=" + props.nodeid + "&ns=" + props.namespace)
       .then((response) => {
@@ -69,6 +90,21 @@ export default function NodeDetailsCard(props) {
       .catch((err) => console.log(err.message));
   };
 
+  const unsubscribe = (event) => {
+    fetch("/unsubscribe?id=" + props.nodeid + "&ns=" + props.namespace)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("http error " + response.status);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setSubscribed(false);
+      })
+      .catch((err) => console.log(err.message));
+  };
+
   return (
     <Card>
       <Box padding={1}>
@@ -79,9 +115,16 @@ export default function NodeDetailsCard(props) {
             <div>{props.displayname}</div>
           )}
         </Typography>
-        <Button onClick={subscribe}>
-          <NotificationsNoneIcon />
-        </Button>
+        {subscribed ? (
+          <Button onClick={unsubscribe}>
+            <NotificationsIcon />
+          </Button>
+        ) : (
+          <Button onClick={subscribe}>
+            <NotificationsNoneIcon />
+          </Button>
+        )}
+
         <TableContainer>
           <Table sx={{ minWidth: 400 }} aria-lable="simple table">
             <TableHead>

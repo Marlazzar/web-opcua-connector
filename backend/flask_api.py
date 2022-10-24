@@ -125,14 +125,30 @@ def subscribe():
         id = request.args['id']
         ns = request.args['ns']
         node = uaclient.get_node(f"ns={ns};i={id}")
-        sub = uaclient.client.create_subscription(100, handler)
-        handle = sub.subscribe_data_change(node)
+        uaclient.subscribe_datachange(node, handler)
+        #sub = uaclient.client.create_subscription(100, handler)
+        #handle = sub.subscribe_data_change(node)
         return jsonify("subscribed")
     else:
         return jsonify("specify id and ns")
 
+@app.route('/unsubscribe')
+def unsubscribe():
+    if not uaclient._connected:
+        return jsonify("client not connected")
+    if 'id' in request.args and 'ns' in request.args:
+        id = int(request.args['id'])
+        ns = int(request.args['ns'])
+        if (id, ns) in subscribed_nodes:
+            node = uaclient.get_node(f"ns={ns};i={id}")
+            uaclient.unsubscribe_datachange(node)
+            subscribed_nodes.pop((id, ns))
+            return jsonify("unsubscribed")
+        else:
+            return jsonify("node wasn't found in subscriptions"), 500
+    else:
+        return jsonify("specify id and ns"), 501
 
-# TODO: unsubscribe method
 
 @app.route('/get_sub')
 def get_sub():
@@ -150,7 +166,7 @@ def get_sub():
         return jsonify("specify id and ns")
 
 
-@app.route('/subscripted_nodes')
+@app.route('/subscribed_nodes')
 def subscripted_nodes():
     return jsonify(dict_keys_list(subscribed_nodes))
 
