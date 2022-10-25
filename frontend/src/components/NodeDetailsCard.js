@@ -106,7 +106,7 @@ export default function NodeDetailsCard(props) {
   };
 
   return (
-    <Card>
+    <Card {...props}>
       <Box padding={1}>
         <Typography gutterBottom variant="h5" component="div">
           {props.nodeid == -1 ? (

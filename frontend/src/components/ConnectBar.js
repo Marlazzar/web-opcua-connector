@@ -40,7 +40,7 @@ export class ConnectBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      opcua_server_url: "opc.tcp://opcua_server:4840/",
+      opcua_server_url: "opc.tcp://localhost:4840",
       data: [],
     };
 

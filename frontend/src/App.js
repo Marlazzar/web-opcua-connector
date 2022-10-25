@@ -1,10 +1,7 @@
 import "./App.css";
 import React, { useEffect, useState } from "react";
 import { ConnectBar } from "./components/ConnectBar";
-import NodesCard from "./components/NodesCard";
-import NodesDetailsCard from "./components/NodeDetailsCard";
-import SubscriptionsCard from "./components/SubscriptionsCard";
-import { Stack, Item } from "@mui/material";
+import ContentGridGard from "./components/ContentGridCard";
 
 class App extends React.Component {
   constructor(props) {
@@ -16,8 +13,6 @@ class App extends React.Component {
     this.handleConnect = this.handleConnect.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
   }
-
-  myobject = { a: "string1", b: "string2" };
 
   handleConnect(event) {
     event.preventDefault();
@@ -33,32 +28,13 @@ class App extends React.Component {
   }
 
   render() {
-    let content;
-    if (this.state.connected) {
-      content = (
-        <Stack direction="row" spacing={2} padding={2}>
-          <NodesCard
-            onSelect={(e, selection) => this.handleSelect(e, selection)}
-          />
-          <NodesDetailsCard
-            nodeid={this.state.selectedNode.nodeid}
-            namespace={this.state.selectedNode.ns}
-            displayname={this.state.selectedNode.displayname}
-          />
-        </Stack>
-      );
-    } else {
-      content = <p>Not Connected</p>;
-    }
-
     return (
       <div className="App">
         <ConnectBar
           connected={this.state.connected}
           onConnect={this.handleConnect}
         />
-        {content}
-        <SubscriptionsCard />
+        {this.state.connected && <ContentGridGard />}
       </div>
     );
   }

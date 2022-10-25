@@ -140,14 +140,12 @@ export default function NodesCard(props) {
   };
 
   return (
-    <Card sx={{ minWidth: 300 }}>
+    <Card {...props}>
       <Box padding={1}>
         <Typography gutterBottom variant="h5" component="div">
           Nodes
         </Typography>
-        <List
-          sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-        >
+        <List sx={{ bgcolor: "background.paper" }}>
           {nodes.map((node) => (
             // selection needs to be managed by NodesCard, because only one selection
             // for the entire NodesCard is possible.
