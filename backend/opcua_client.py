@@ -80,7 +80,7 @@ class UaClient(object):
             )
         self.client.connect()
         self._connected = True
-        self.client.load_data_type_definitions()
+        # self.client.load_data_type_definitions()
         try:
             self.client.load_enums()
             self.client.load_type_definitions()
@@ -181,6 +181,8 @@ class UaClient(object):
                         # the dataype node.
                         node = self.get_node(dv.Value.Value)
                         string = node.read_attribute(ua.AttributeIds.DisplayName).Value.Value.Text
+                    elif attr == ua.AttributeIds.NodeClass:
+                        string = str(ua.NodeClass(dv.Value.Value))
                     else:
                         string = val_to_string(dv.Value.Value)
                     attr_name = attr.name
