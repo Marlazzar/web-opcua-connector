@@ -42,6 +42,8 @@ export class ConnectBar extends React.Component {
     this.state = {
       opcua_server_url: "opc.tcp://localhost:4840",
       data: [],
+      hasError: false,
+      errorMessage: "",
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -54,6 +56,7 @@ export class ConnectBar extends React.Component {
   }
 
   handleConnect(event) {
+    this.setState({ hasError: false });
     event.preventDefault();
     const requestOptions = {
       method: "POST",
@@ -74,7 +77,10 @@ export class ConnectBar extends React.Component {
           this.props.onConnect(event);
         }
       })
-      .catch((err) => console.log(err.message));
+      .catch((er) => {
+        this.setState({ hasError: true, errorMessage: "error" + er });
+        console.log(er.message);
+      });
   }
 
   handleDisconnect(event) {
@@ -114,6 +120,7 @@ export class ConnectBar extends React.Component {
             {button}
           </Toolbar>
         </AppBar>
+        {this.state.hasError && <Typography>Something went wrong.</Typography>}
       </Box>
     );
   }
