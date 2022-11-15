@@ -41,7 +41,7 @@ export default function NodeDetailsCard(props) {
   // data should be updated whenever props change...
   useEffect(() => {
     // get nodeid and namespace of the selected node
-    fetch("/nodes?id=" + props.nodeid + "&ns=" + props.namespace)
+    fetch("/browse/nodes?id=" + props.nodeid + "&ns=" + props.namespace)
       .then((response) => {
         if (!response.ok) {
           throw new Error("http error " + response.status);
@@ -58,7 +58,7 @@ export default function NodeDetailsCard(props) {
   // data should be updated whenever props change...
   useEffect(() => {
     // get nodeid and namespace of the selected node
-    fetch("/subscribed_nodes")
+    fetch("/subs/subscribed_nodes")
       .then((response) => {
         if (!response.ok) {
           throw new Error("http error " + response.status);
@@ -76,7 +76,7 @@ export default function NodeDetailsCard(props) {
   }, [props.nodeid, props.namespace]);
 
   const subscribe = (event) => {
-    fetch("/subscribe?id=" + props.nodeid + "&ns=" + props.namespace)
+    fetch("/subs/subscribe?id=" + props.nodeid + "&ns=" + props.namespace)
       .then((response) => {
         if (!response.ok) {
           throw new Error("http error " + response.status);
@@ -91,7 +91,7 @@ export default function NodeDetailsCard(props) {
   };
 
   const unsubscribe = (event) => {
-    fetch("/unsubscribe?id=" + props.nodeid + "&ns=" + props.namespace)
+    fetch("/subs/unsubscribe?id=" + props.nodeid + "&ns=" + props.namespace)
       .then((response) => {
         if (!response.ok) {
           throw new Error("http error " + response.status);

@@ -28,7 +28,12 @@ class Children extends React.Component {
     this.setState((state) => ({ expanded: !state.expanded }));
 
     if (!this.state.fetched) {
-      fetch("/children?ns=" + this.props.namespace + "&id=" + this.props.nodeid)
+      fetch(
+        "/browse/children?ns=" +
+          this.props.namespace +
+          "&id=" +
+          this.props.nodeid
+      )
         .then((response) => {
           if (!response.ok) {
             throw new Error(
@@ -106,7 +111,7 @@ export default function NodesCard(props) {
 
   useEffect(() => {
     // get nodeid and namespace of root
-    fetch("/root")
+    fetch("/browse/root")
       .then((response) => {
         if (!response.ok) {
           throw new Error("http error: root not found");
@@ -117,7 +122,7 @@ export default function NodesCard(props) {
         console.log(root);
         const id = root.NodeId;
         const ns = root.Namespace;
-        fetch("/children?ns=" + ns + "&id=" + id)
+        fetch("/browse/children?ns=" + ns + "&id=" + id)
           .then((response) => {
             if (!response.ok) {
               throw new Error("http error: children of root not found");

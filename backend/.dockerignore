@@ -171,3 +171,5 @@ venv/
 */*/*.swp
 
 */*/*/*.swp
+
+log.txt
