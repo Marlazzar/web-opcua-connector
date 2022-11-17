@@ -3,15 +3,15 @@ version: "3.7"
 services:
   backend:
     build: "./backend"
+    container_name: backend
     environment:
-      - DEBUG=True
+      - discovery.type=single-node
     ports:
       - "5000:5000"
 
   frontend:
     build: "./frontend"
-    environment:
-      - DEBUG=True
+    container_name: frontend
     depends_on:
       - "backend"
     ports:

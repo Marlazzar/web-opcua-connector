@@ -18,11 +18,11 @@ def dict_keys_list(dict):
 
 
 ### methods for logging ###
-def create_logfile(path):
-    f = open(path + "/log.txt", "a")
-    return f
+def create_logfile(logfile):
+    f = open(logfile, "a")
+    f.close()
 
-def log(nodedict, f):
+def log(nodedict, logpath):
     # TODO: log displayname, datatype, timestamp, value to single logfile
     # logline should look like this: 
     # timestamp:<time> displayname:<dname> datatype:<dtype> value:<value>
@@ -31,9 +31,10 @@ def log(nodedict, f):
     #displayname = nodedict["Displayname"]
     #datatype = nodedict["Datatype"]
     value = nodedict["Value"]
-    logline = f"timestamp: {timestamp} displayname: test datatype: test value: {value}"
-    with open(f, "a"):
-        f.write(logline + "\n")
+    logline = f"timestamp: {timestamp}, displayname: test, datatype: test, value: {value}"
+    f = open(logpath, "a")
+    f.write(logline + "\n")
+    f.close()
 
 
 

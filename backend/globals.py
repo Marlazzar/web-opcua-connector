@@ -12,7 +12,8 @@ def init():
     subscribed_nodes = {}
     # update_datachage method should receive dict(nodeid, namespace, value, timestamp) as parameter and edit
     # this list
-    f = utils.create_logfile("./backend")
+    logfile = "./backend/log.txt"
+    utils.create_logfile(logfile)
     def update_datachange(nodedict):
         print("updating data...")
         # called once even for const
@@ -20,7 +21,7 @@ def init():
         id = nodedict["NodeId"]
         ns = nodedict["Namespace"]
         subscribed_nodes[(id,ns)] = nodedict
-        utils.log(nodedict, f)
+        utils.log(nodedict, logfile)
     global handler
     handler = DatachangeHandler(update_datachange)
 

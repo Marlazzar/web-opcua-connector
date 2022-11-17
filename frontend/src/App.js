@@ -27,7 +27,21 @@ class App extends React.Component {
     this.setState({ selectedNode: selection });
   }
 
+
+
   render() {
+      fetch("/hey")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("http error while connecting to backend " + response.status);
+          }
+          return response.json();
+        })
+        .then((hello) => {
+          console.log(hello)
+        })
+        .catch((err) => console.log(err.message));
+    
     return (
       <div className="App">
         <ConnectBar

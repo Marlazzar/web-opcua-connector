@@ -11,6 +11,10 @@ def register_base_urls(flaskapp):
     def hello():
         return "This is my flask backend" 
 
+    @flaskapp.route('/hey')
+    def hey():
+        return jsonify("hello from backend")
+
     # catch all undefined paths
     @flaskapp.route('/', defaults={'path': ''})
     @flaskapp.route('/<path:path>')
@@ -36,6 +40,8 @@ def register_base_urls(flaskapp):
     def disconnect():
         gl.uaclient.disconnect()
         return jsonify("disconnected")
+    
+
 
 
 
