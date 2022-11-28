@@ -9,8 +9,12 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  CardContent,
+  Grid,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import OpenLogDialog from "./LogDialog";
+
 
 function SubscriptionRow(props) {
   const [nodedict, setNodedict] = useState({});
@@ -58,12 +62,27 @@ export default function SubscriptionsCard() {
       .catch((err) => console.log(err.message));
   });
 
+  const setlog = (event) => {
+    fetch("/setlog")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("http error " + response.status);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => console.log(err.message));
+  };
+
   return (
     <Card>
+      <CardContent>
       <Box padding={1}>
-        <Typography gutterBottom variant="h5" component="div">
-          Subscriptions
-        </Typography>
+                <Typography gutterBottom variant="h5" component="div">Subscriptions</Typography>
+                <OpenLogDialog/>
+
         <TableContainer>
           <Table sx={{ minWidth: 800 }} aria-lable="simple table">
             <TableHead>
@@ -81,6 +100,7 @@ export default function SubscriptionsCard() {
           </Table>
         </TableContainer>
       </Box>
+      </CardContent>
     </Card>
   );
 }

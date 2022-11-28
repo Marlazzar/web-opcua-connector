@@ -1,4 +1,5 @@
 from asyncua import ua
+import backend.globals as gl
 
 # This method expects a ReferenceDescription of a node and
 # returns a little dictionary with the most important info.
@@ -20,9 +21,10 @@ def dict_keys_list(dict):
 ### methods for logging ###
 def create_logfile(logfile):
     f = open(logfile, "a")
+    f.write("Timestamp, DisplayName, DataType, Value")
     f.close()
 
-def log(nodedict, logpath):
+def log(nodedict):
     # TODO: log displayname, datatype, timestamp, value to single logfile
     # logline should look like this: 
     # timestamp:<time> displayname:<dname> datatype:<dtype> value:<value>
@@ -31,8 +33,8 @@ def log(nodedict, logpath):
     #displayname = nodedict["Displayname"]
     #datatype = nodedict["Datatype"]
     value = nodedict["Value"]
-    logline = f"timestamp: {timestamp}, displayname: test, datatype: test, value: {value}"
-    f = open(logpath, "a")
+    logline = f"{timestamp}, test, test, {value}"
+    f = open(gl.logpath, "a")
     f.write(logline + "\n")
     f.close()
 
