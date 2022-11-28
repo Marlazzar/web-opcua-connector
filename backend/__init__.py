@@ -9,10 +9,6 @@ def register_base_urls(flaskapp):
     # a simple page that says hello
     @flaskapp.route('/')
     def hello():
-        hellofile = "./backend/hello.txt"
-        f = open(hellofile, "w")
-        f.write("lask")
-        f.close()
         return "This is my flask backend" 
 
     @flaskapp.route('/hey')

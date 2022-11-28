@@ -20,8 +20,8 @@ def dict_keys_list(dict):
 
 ### methods for logging ###
 def create_logfile(logfile):
-    f = open(logfile, "a")
-    f.write("Timestamp, DisplayName, DataType, Value")
+    f = open(logfile, "w")
+    f.write("Timestamp, DisplayName, DataType, Value\n")
     f.close()
 
 def log(nodedict):
@@ -34,7 +34,7 @@ def log(nodedict):
     #datatype = nodedict["Datatype"]
     value = nodedict["Value"]
     logline = f"{timestamp}, test, test, {value}"
-    f = open(gl.logpath, "a")
+    f = open(gl.logfile, "a")
     f.write(logline + "\n")
     f.close()
 
