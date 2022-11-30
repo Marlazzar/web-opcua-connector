@@ -27,16 +27,28 @@ def create_logfile(logfile):
 def log(nodedict):
     # TODO: log displayname, datatype, timestamp, value to single logfile
     # logline should look like this: 
-    # timestamp:<time> displayname:<dname> datatype:<dtype> value:<value>
+    # timestamp:<time>, displayname:<dname>, datatype:<dtype>, value:<value>
     print("logging...")
     timestamp = nodedict["Timestamp"]
-    #displayname = nodedict["Displayname"]
-    #datatype = nodedict["Datatype"]
+    displayname = nodedict["Displayname"]
+    datatype = nodedict["Datatype"]
     value = nodedict["Value"]
-    logline = f"{timestamp}, test, test, {value}"
+    logline = f"{timestamp}, {displayname}, {datatype}, {value}"
     f = open(gl.logfile, "a")
     f.write(logline + "\n")
     f.close()
+
+# to make sure all the dicts in subscribed_nodes have the same keys, please use this method
+# to generate a proper dict
+def create_nodedict(id, ns, timestamp, displayname, datatype, value):
+    nodedict = {}
+    nodedict["NodeId"] = id
+    nodedict["Namespace"] = ns
+    nodedict["Timestamp"] = timestamp
+    nodedict["Displayname"] = displayname
+    nodedict["Datatype"] = datatype
+    nodedict["Value"] = value
+    return nodedict
 
 
 

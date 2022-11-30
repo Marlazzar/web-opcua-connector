@@ -19,7 +19,7 @@ class UaClient(object):
     """
 
     def __init__(self):
-        self.application_uri = "urn:freeopcua:client-gui"
+        self.application_uri = "urn:opcua:client-wrapper"
         self.client = None
         self._connected = False
         self._datachange_sub = None
@@ -62,7 +62,7 @@ class UaClient(object):
                     self.user_certificate_path, self.user_private_key_path)
         self.client = Client(uri)
         self.client.application_uri = self.application_uri
-        self.client.description = "FreeOpcUa Client GUI"
+        self.client.description = "Opcua Client"
 
         # Set user identity token
         if self.user_private_key_path:
@@ -192,6 +192,14 @@ class UaClient(object):
                 logger.exception(f"Exception while displaying attribute {attr} with value {dv} for node {node}")
         return final_results
 
+    def read_display_name(self, node):
+        displayname = node.read_attribute(ua.AttributeIds.DisplayName).Value.Value.Text
+        return displayname
+    
+    def read_datatype(self, node):
+        datatypenode = self.get_node(node.read_attribute(ua.AttributeIds.DataType).Value.Value)
+        datatype = self.read_display_name(datatypenode)
+        return datatype
 
 def attr_to_enum(attr):
     attr_name = attr.name
@@ -208,13 +216,12 @@ def enum_to_string(attr, val):
 
 if __name__ == '__main__':
     uaclient = UaClient()
-    url = "opc.tcp://localhost:4840/freeopcua/server/"
+    url = "opc.tcp://localhost:4840/"
     uaclient.connect(url)
-    node = uaclient.get_node("ns=0;i=7597")
+    node = uaclient.get_node("ns=2;i=14")
+    print(node.nodeid.Identifier)
     attributes = uaclient.get_all_attributes(node)
     print(attributes)
-    for tuple in attributes:
-        if tuple[0] == 'Value':
-            print(type(tuple[1][0]))
+    print(uaclient.read_datatype(node))
     uaclient.disconnect()
     print("disconnected")

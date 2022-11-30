@@ -4,8 +4,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify
 )
 from asyncua import ua
-from backend.utils import dict_keys_list
-
+from backend.utils import dict_keys_list, create_nodedict
 
 bp = Blueprint('subs', __name__, url_prefix='/subs')
 
@@ -16,12 +15,15 @@ def subscribe():
     if not gl.uaclient._connected:
         return jsonify("client not connected")
     if 'id' in request.args and 'ns' in request.args:
-        id = request.args['id']
-        ns = request.args['ns']
+        id = int(request.args['id'])
+        ns = int(request.args['ns'])
         node = gl.uaclient.get_node(f"ns={ns};i={id}")
+        displayname = gl.uaclient.read_display_name(node)
+        datatype = gl.uaclient.read_datatype(node)
+        nodedict = create_nodedict(id=id, ns=ns, timestamp="initial", displayname=displayname, datatype=datatype, value=" ")
+        # this is where our info about the node will be recorded
+        gl.subscribed_nodes[(id, ns)] = nodedict
         gl.uaclient.subscribe_datachange(node, gl.handler)
-        #sub = uaclient.client.create_subscription(100, handler)
-        #handle = sub.subscribe_data_change(node)
         return jsonify("subscribed")
     else:
         return jsonify("specify id and ns")

@@ -17,15 +17,11 @@ def init():
     global logfile
     logfile = "./backend/log.txt"
     utils.create_logfile(logfile)
-    def update_datachange(nodedict):
+    def update_datachange(id, ns, timestamp, value):
         print("updating data...")
-        # called once even for const
-        # TODO: This needs to log
-        id = nodedict["NodeId"]
-        ns = nodedict["Namespace"]
-        subscribed_nodes[(id,ns)] = nodedict
+        subscribed_nodes[(id,ns)]["Value"] = value
+        subscribed_nodes[(id,ns)]["Timestamp"] = timestamp
         if logging:
-            utils.log(nodedict)
+            utils.log(subscribed_nodes[(id,ns)])
     global handler
     handler = DatachangeHandler(update_datachange)
-

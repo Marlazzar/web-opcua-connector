@@ -1,6 +1,5 @@
 from datetime import datetime
 
-
 class DatachangeHandler(object):
     """
     Subscription Handler. To receive events from server for a subscription
@@ -24,15 +23,13 @@ class DatachangeHandler(object):
         else:
             dato = datetime.now().isoformat()
         # fire event
-        nodedict = {}
-        nodedict["NodeId"] = node.nodeid.Identifier
-        nodedict["Namespace"] = node.nodeid.NamespaceIndex
-        nodedict["Value"] = str(val)
-        nodedict["Timestamp"] = dato
-        self.callback(nodedict)
-
+        id = node.nodeid.Identifier
+        ns = node.nodeid.NamespaceIndex
+        value = str(val)
+        timestamp = dato
+        self.callback(id, ns, timestamp, value)
 
 
     def event_notification(self, event):
-        print("New event", event)
+        print("New event", event) 
 

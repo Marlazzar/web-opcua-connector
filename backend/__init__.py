@@ -58,9 +58,6 @@ def register_base_urls(flaskapp):
             gl.logging = not gl.logging
             return jsonify(gl.logging)
         return jsonify(gl.logging)
-    
-        
-
 
 
 

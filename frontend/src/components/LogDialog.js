@@ -19,10 +19,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import Switch from "@mui/material/Switch";
 
 function LoggingDialog(props) {
-  const { open, onClose } = props;
+  const { open, onClose, onEnablelog, defaultlog } = props;
   const [selection, setSelection] = React.useState("");
-  const [enablelog, setEnablelog] = React.useState(false);
-  const [defaultswitch, setDefaultswitch] = React.useState(false);
 
   useEffect(() => {
     fetch("/setlog")
@@ -34,19 +32,6 @@ function LoggingDialog(props) {
       })
       .then((data) => {
         setSelection(data);
-      })
-      .catch((err) => console.log(err.message));
-
-    fetch("/enablelog")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("http error " + response.status);
-        }
-        return response.json();
-      })
-      .then((enlogdata) => {
-        setEnablelog(enlogdata);
-        setDefaultswitch(enlogdata);
       })
       .catch((err) => console.log(err.message));
   }, []);
@@ -92,7 +77,8 @@ function LoggingDialog(props) {
         return response.json();
       })
       .then((data) => {
-        setEnablelog(data);
+        onEnablelog(data);
+        console.log("enablelog set to " + data);
       })
       .catch((er) => console.log(er.message));
   };
@@ -106,7 +92,7 @@ function LoggingDialog(props) {
             <Switch
               sx={{ m: 1 }}
               onChange={handleSwitch}
-              defaultChecked={defaultswitch}
+              defaultChecked={defaultlog}
             />
           }
           label="Enable logging"
@@ -151,6 +137,23 @@ LoggingDialog.propTypes = {
 export default function OpenLogDialog() {
   const [open, setOpen] = React.useState(false);
   const [hasError, setError] = React.useState(false);
+  const [enablelog, setEnablelog] = React.useState(false);
+
+  useEffect(() => {
+    // enablelog is only fetched once, so if somebody else changes the value in the backend
+    // the switch might be ought of sync.
+    fetch("/enablelog")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("http error " + response.status);
+        }
+        return response.json();
+      })
+      .then((enlogdata) => {
+        setEnablelog(enlogdata);
+      })
+      .catch((err) => console.log(err.message));
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -160,12 +163,22 @@ export default function OpenLogDialog() {
     setOpen(false);
   };
 
+  const handleEnablelog = () => {
+    const newvalue = !enablelog;
+    setEnablelog(newvalue);
+  };
+
   return (
     <Stack direction="row" spacing={2}>
       <Button variant="outlined" onClick={handleClickOpen} size="small">
         logs
       </Button>
-      <LoggingDialog open={open} onClose={handleClose} />
+      <LoggingDialog
+        open={open}
+        onClose={handleClose}
+        onEnablelog={handleEnablelog}
+        defaultlog={enablelog}
+      />
     </Stack>
   );
 }
