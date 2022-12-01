@@ -4,6 +4,8 @@ import backend.api_browse as api_browse
 import backend.api_subscribe as api_subscribe
 import backend.globals as gl
 from flask import jsonify, request
+import backend.utils as utils
+import os
 
 def register_base_urls(flaskapp):
     # a simple page that says hello
@@ -45,12 +47,14 @@ def register_base_urls(flaskapp):
     def setlog():
         if request.method == 'POST':
             filepath = request.json['path']
-            gl.logfile = filepath
-            # TODO: check if valid filepath
-            return jsonify("ok"), 200
+            if os.path.exists(filepath):
+                gl.logpath = utils.generate_logfilename(filepath)
+                return jsonify("ok"), 200
+            else:
+                # TODO: Maybe error code?
+                return jsonify("no such filepath"), 200
         else:
-            # TODO: check if valid filepath
-            return jsonify(gl.logfile), 200
+            return jsonify(os.path.dirname(gl.logpath)), 200
     
     @flaskapp.route('/enablelog')
     def enablelog():

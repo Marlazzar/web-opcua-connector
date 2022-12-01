@@ -19,28 +19,25 @@ import CloseIcon from "@mui/icons-material/Close";
 import Switch from "@mui/material/Switch";
 
 function LoggingDialog(props) {
-  const { open, onClose, onEnablelog, defaultlog } = props;
-  const [selection, setSelection] = React.useState("");
-
-  useEffect(() => {
-    fetch("/setlog")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("http error " + response.status);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setSelection(data);
-      })
-      .catch((err) => console.log(err.message));
-  }, []);
+  const {
+    open,
+    onClose,
+    onEnablelog,
+    defaultlog,
+    selectedpath,
+    onPathchange,
+  } = props;
+  const [selection, setSelection] = useState(selectedpath);
+  const [error, setError] = useState(false);
+  var oldvalue = selection;
 
   const handleClose = () => {
+    setSelection(oldvalue);
+    setError(false);
     onClose();
   };
 
-  const handleUpdate = (value) => {
+  const handleUpdate = () => {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,17 +52,20 @@ function LoggingDialog(props) {
       })
       .then((acutalData) => {
         if (acutalData == "ok") {
-          console.log("updated log file: " + selection);
+          onPathchange(selection);
+          setError(false);
+          console.log("updated logpath: " + selection);
+          handleClose();
         } else {
-          setSelection("Error");
-          console.log("Failed changing log file in backend");
+          setError(true);
+          console.log("Failed changing logpath in backend");
           console.log(acutalData);
+          console.log("set selection to: " + selection);
         }
       })
       .catch((er) => {
         console.log(er.message);
       });
-    handleClose();
   };
 
   const handleSwitch = () => {
@@ -85,7 +85,7 @@ function LoggingDialog(props) {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Set path to logfile</DialogTitle>
+      <DialogTitle>Set logpath</DialogTitle>
       <FormGroup sx={{ px: 1 }}>
         <FormControlLabel
           control={
@@ -102,11 +102,14 @@ function LoggingDialog(props) {
         <ListItem>
           <TextField
             onChange={(event) => setSelection(event.target.value)}
-            defaultValue={selection}
-          >
-            Enter logfilepath
-          </TextField>
+            defaultValue={selectedpath}
+          />
         </ListItem>
+        {error && (
+          <ListItem>
+            <ListItemText primary="Error: can't save logfile here" />
+          </ListItem>
+        )}
         <ListItem autoFocus button onClick={handleUpdate}>
           <ListItemAvatar>
             <Avatar>
@@ -135,9 +138,10 @@ LoggingDialog.propTypes = {
 };
 
 export default function OpenLogDialog() {
-  const [open, setOpen] = React.useState(false);
-  const [hasError, setError] = React.useState(false);
-  const [enablelog, setEnablelog] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [hasError, setError] = useState(false);
+  const [enablelog, setEnablelog] = useState(false);
+  const [selectedpath, setSelectedpath] = useState("");
 
   useEffect(() => {
     // enablelog is only fetched once, so if somebody else changes the value in the backend
@@ -151,6 +155,18 @@ export default function OpenLogDialog() {
       })
       .then((enlogdata) => {
         setEnablelog(enlogdata);
+      })
+      .catch((err) => console.log(err.message));
+
+    fetch("/setlog")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("http error " + response.status);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setSelectedpath(data);
       })
       .catch((err) => console.log(err.message));
   }, []);
@@ -168,6 +184,10 @@ export default function OpenLogDialog() {
     setEnablelog(newvalue);
   };
 
+  const handleSelectedpath = (path) => {
+    setSelectedpath(path);
+  };
+
   return (
     <Stack direction="row" spacing={2}>
       <Button variant="outlined" onClick={handleClickOpen} size="small">
@@ -178,6 +198,8 @@ export default function OpenLogDialog() {
         onClose={handleClose}
         onEnablelog={handleEnablelog}
         defaultlog={enablelog}
+        selectedpath={selectedpath}
+        onPathchange={handleSelectedpath}
       />
     </Stack>
   );

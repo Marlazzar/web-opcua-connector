@@ -1,8 +1,8 @@
 import backend.opcua_client as opcua_client
 from backend.DatachangeHandler import DatachangeHandler
 import backend.utils as utils
-# initialize global variables
 
+# initialize global variables
 
 def init():
     # opcuaclient
@@ -14,9 +14,9 @@ def init():
     # this list
     global logging
     logging = True
-    global logfile
-    logfile = "./backend/log.txt"
-    utils.create_logfile(logfile)
+    global logpath
+    logpath = utils.generate_logfilename("./backend")
+    utils.create_logfile(logpath)
     def update_datachange(id, ns, timestamp, value):
         print("updating data...")
         subscribed_nodes[(id,ns)]["Value"] = value

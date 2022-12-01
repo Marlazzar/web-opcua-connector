@@ -1,8 +1,9 @@
-from asyncua import ua
 import backend.globals as gl
+from datetime import datetime
 
 # This method expects a ReferenceDescription of a node and
 # returns a little dictionary with the most important info.
+# Returns jsonify-able description.
 def create_desc_dict(desc):
     desc_dict = {}
     desc_dict["DisplayName"] = str(desc.DisplayName.Text)
@@ -17,10 +18,9 @@ def dict_keys_list(dict):
         mylist.append(k[0])
     return mylist
 
-
 ### methods for logging ###
-def create_logfile(logfile):
-    f = open(logfile, "w")
+def create_logfile(filename):
+    f = open(filename, "w")
     f.write("Timestamp, DisplayName, DataType, Value\n")
     f.close()
 
@@ -34,7 +34,7 @@ def log(nodedict):
     datatype = nodedict["Datatype"]
     value = nodedict["Value"]
     logline = f"{timestamp}, {displayname}, {datatype}, {value}"
-    f = open(gl.logfile, "a")
+    f = open(gl.logpath, "a")
     f.write(logline + "\n")
     f.close()
 
@@ -49,6 +49,11 @@ def create_nodedict(id, ns, timestamp, displayname, datatype, value):
     nodedict["Datatype"] = datatype
     nodedict["Value"] = value
     return nodedict
+
+def generate_logfilename(filepath):
+    current_time = datetime.now().strftime("%m-%d-%Y_%HUhr%M")
+    filename = f"{filepath}/opcua_log_{current_time}.csv"
+    return filename
 
 
 
