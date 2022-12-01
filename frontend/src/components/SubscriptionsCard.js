@@ -28,7 +28,6 @@ function SubscriptionRow(props) {
         return response.json();
       })
       .then((newnodedict) => {
-        //console.log(newnodedict);
         setNodedict(newnodedict);
       })
       .catch((err) => console.log(err.message));
