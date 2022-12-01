@@ -36,7 +36,8 @@ function SubscriptionRow(props) {
 
   return (
     <TableRow>
-      <TableCell>{nodedict["NodeId"]}</TableCell>
+      <TableCell>{nodedict["Displayname"]}</TableCell>
+      <TableCell>{nodedict["Datatype"]}</TableCell>
       <TableCell>{nodedict["Value"]}</TableCell>
       <TableCell>{nodedict["Timestamp"]}</TableCell>
     </TableRow>
@@ -87,7 +88,8 @@ export default function SubscriptionsCard() {
           <Table sx={{ minWidth: 800 }} aria-lable="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Nodeid</TableCell>
+                <TableCell>Displayname</TableCell>
+                <TableCell>Datatype</TableCell>
                 <TableCell>Value</TableCell>
                 <TableCell align="right">Timestamp</TableCell>
               </TableRow>
