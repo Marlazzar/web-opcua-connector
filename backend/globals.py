@@ -7,7 +7,7 @@ import backend.utils as utils
 def init():
     # opcuaclient
     global uaclient
-    uaclient = opcua_client.UaClient()
+    uaclient = opcua_client.OpcuaClient()
     global subscribed_nodes
     subscribed_nodes = {}
     # update_datachage method should receive dict(nodeid, namespace, value, timestamp) as parameter and edit

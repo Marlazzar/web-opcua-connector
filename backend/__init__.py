@@ -33,7 +33,7 @@ def register_base_urls(flaskapp):
                 gl.uaclient.connect(url)
             except Exception as e:
                 return jsonify("failed to connect to opcua server"), 500
-        if gl.uaclient._connected:
+        if gl.uaclient.connected:
             return jsonify("connected"), 200
         else:
             return jsonify("not connected"), 200

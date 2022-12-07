@@ -12,7 +12,7 @@ bp = Blueprint('subs', __name__, url_prefix='/subs')
 @bp.route('/subscribe')
 def subscribe():
     # datachange subscription
-    if not gl.uaclient._connected:
+    if not gl.uaclient.connected:
         return jsonify("client not connected")
     if 'id' in request.args and 'ns' in request.args:
         id = int(request.args['id'])
@@ -31,7 +31,7 @@ def subscribe():
 
 @bp.route('/unsubscribe')
 def unsubscribe():
-    if not gl.uaclient._connected:
+    if not gl.uaclient.connected:
         return jsonify("client not connected")
     if 'id' in request.args and 'ns' in request.args:
         id = int(request.args['id'])
@@ -49,7 +49,7 @@ def unsubscribe():
 
 @bp.route('/get_sub')
 def get_sub():
-    if not gl.uaclient._connected:
+    if not gl.uaclient.connected:
         return jsonify("client not connected")
     if 'id' in request.args and 'ns' in request.args:
         id = int(request.args['id'])

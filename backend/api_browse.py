@@ -22,7 +22,7 @@ def browse():
 def temporary_connect():
     default_url = "opc.tcp://localhost:4840/"
     gl.uaclient.connect(default_url)
-    return jsonify(gl.uaclient._connected)
+    return jsonify(gl.uaclient.connected)
 
 
 @bp.route('/root', methods=['GET'])
@@ -37,7 +37,7 @@ def root():
 def get_children():
     # returns description of all the children of specified node. gives the following child-attributes:
     # nodeid, namespace, displayname, nodeclass
-    if not gl.uaclient._connected:
+    if not gl.uaclient.connected:
         return 'not connected'
     if 'id' in request.args and 'ns' in request.args:
         id = request.args['id']
@@ -58,7 +58,7 @@ def get_node_attributes():
     if 'id' in request.args and 'ns' in request.args:
         id = request.args['id']
         ns = request.args['ns']
-        if gl.uaclient._connected:
+        if gl.uaclient.connected:
             node = gl.uaclient.get_node(f"ns={ns};i={id}")
             attributes = gl.uaclient.get_all_attributes(node, all=False, attributes=attrs)
             return jsonify(attributes)
