@@ -13,10 +13,10 @@ def init():
     # update_datachage method should receive dict(nodeid, namespace, value, timestamp) as parameter and edit
     # this list
     global logging
-    logging = True
+    logging = False
     global logpath
     logpath = utils.generate_logfilename("./backend")
-    utils.create_logfile(logpath)
+    #utils.create_logfile(logpath)
     def update_datachange(id, ns, timestamp, value):
         print("updating data...")
         subscribed_nodes[(id,ns)]["Value"] = value
