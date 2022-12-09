@@ -1,4 +1,4 @@
-# opcua_connector
+# web-opcua-connector
 
 This repository contains a simple web client for an opcua-server. The user can browse nodes on the server, inspect their attributes and subscribe to them. The difference between this project and other implementations is, that it is a web-application and can run in your browser.
 
